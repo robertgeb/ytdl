@@ -1,14 +1,10 @@
 #!/bin/bash
-useragent='Mozilla/5.0 (compatible)'
-curl -L -A '$useragent' -o - $1 | # -> Request html from the link pass by param
-grep videoplayback |                           # -> Find the line of javascript with params of the video
-sed 's/,/\n/g' |                               # -> New line where has a comma, make each array param a single line
-grep url_encoded_fmt_stream_map |              # -> Find the line with direct video urls
-grep url_encoded_fmt_stream_map |              # -> Find the line with direct video urls
-sed 's/\\u0026/\n/g' |                         # -> New line on a char especial wich divide urls details
-grep url= |                                    # -> Find the url in itsel
-xargs -0 echo -e $(sed 's/%/\\x/g') |          # -> Convert hex chars to string
-sed 's/url=//g; s/.*"url_encoded_fmt_stream_map":"//' |                                # -> Remove "url=" of string
-head -n 1 |                            # -> Take the first one url
-xargs aria2c --max-connection-per-server 16 -s 16 --user-agent '$useragent' -o $2 #Download the video
-#xargs curl -vL --compressed -A 'Mozilla/5.0 (compatible)' -o video.mp4 --retry 5
+if cat $1.txt | grep mp4; then
+  tail -1 $1.txt | xargs aria2c --max-connection-per-server 16 -s 16 -l aria2.log --user-agent '$useragent' -o $2.mp4
+fi
+if cat $1.txt | grep mp3; then
+  tail -1 $1.txt | xargs aria2c --max-connection-per-server 16 -s 16 -l aria2.log --user-agent '$useragent' -o $2.mp3
+fi
+if cat $1.txt | grep webm; then
+  tail -1 $1.txt | xargs aria2c --max-connection-per-server 16 -s 16 -l aria2.log --user-agent '$useragent' -o $2.webm
+fi
