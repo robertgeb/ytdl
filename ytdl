@@ -10,5 +10,5 @@ grep url= |                                    # -> Find the url in itsel
 xargs -0 echo -e $(sed 's/%/\\x/g') |          # -> Convert hex chars to string
 sed 's/url=//g; s/.*"url_encoded_fmt_stream_map":"//' |                                # -> Remove "url=" of string
 head -n 1 |                            # -> Take the first one url
-xargs aria2c --max-connection-per-server 16 -s 16 --user-agent '$useragent' -o video.mp4 #Download the video
+xargs aria2c --max-connection-per-server 16 -s 16 --user-agent '$useragent' -o $2 #Download the video
 #xargs curl -vL --compressed -A 'Mozilla/5.0 (compatible)' -o video.mp4 --retry 5
